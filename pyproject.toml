@@ -1,0 +1,16 @@
+[project]
+name = "polymarket-mcp"
+version = "1.0.0"
+description = "MCP server exposing 34 Polymarket prediction-market tools for LLM agents — market discovery, real-time pricing, analytics, account management, and authenticated trading."
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+dependencies = [
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.26.0",
+    "py-clob-client>=0.34.0",
+    "python-dotenv>=1.2.1",
+]
+
+[project.scripts]
+polymarket-mcp = "server:mcp.run"

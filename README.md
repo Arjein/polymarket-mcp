@@ -190,11 +190,11 @@ Once connected to Claude Desktop, you can ask:
 
 > "What are the hottest markets on Polymarket right now?"
 
-> "Show me the price history for the Iran strikes market over the last week"
+> "Show me the Bitcoin price history over the last week"
 
-> "What's the order book depth for the Fed March meeting market?"
+> "What's the order book depth for the Fed rate decision market?"
 
-> "Place a dry-run buy order for 100 YES shares at $0.35 on the Iran market"
+> "Place a dry-run buy order for 100 YES shares at $0.35 on the Super Bowl market"
 
 ## License
 

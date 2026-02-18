@@ -196,6 +196,16 @@ Once connected to Claude Desktop, you can ask:
 
 > "Place a dry-run buy order for 100 YES shares at $0.35 on the Super Bowl market"
 
+## ⚠️ Disclaimer
+
+This software is provided for **educational and informational purposes only**. It is not financial advice.
+
+- **Trading prediction markets involves risk.** You may lose some or all of your funds.
+- The authors are **not responsible** for any financial losses incurred through the use of this software.
+- **You are solely responsible** for your own trading decisions and for complying with all applicable laws and regulations in your jurisdiction.
+
+By using this software, you acknowledge and accept these risks.
+
 ## License
 
 MIT

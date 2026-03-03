@@ -30,20 +30,18 @@ def register_gamma_tools(mcp: FastMCP, gamma: GammaClient) -> None:
     ) -> str:
         """Search and discover Polymarket prediction events.
 
-        Events are top-level containers that group related markets. For example,
-        an event "2024 US Presidential Election" may contain markets for each candidate.
-
-        This is the best starting point for exploring what's available on Polymarket.
+        Events function as high-level thematic containers grouping related markets (e.g., '2024 US Presidential Election' containing multiple candidate markets).
+        This serves as the primary entry point for exploring the Polymarket ecosystem.
 
         Args:
-            query: Search term to filter events by title or description (matched via slug).
-            tag: Category tag to filter by (e.g. "politics", "crypto", "sports").
-            active: If true, only return currently active/open events.
-            closed: If true, only return resolved/closed events.
-            order: Field to sort by (e.g. "volume", "created_at", "end_date_iso").
-            ascending: Sort direction. False for descending (default).
-            limit: Maximum number of results to return.
-            offset: Pagination offset for results.
+            query (Optional[str]): A search term utilized to filter events by their title or descriptive slug.
+            tag (Optional[str]): A thematic category tag for filtering (e.g., 'politics', 'crypto', 'sports').
+            active (Optional[bool]): Set to true to strictly return currently active and open events.
+            closed (Optional[bool]): Set to true to strictly return resolved or closed events.
+            order (Optional[str]): The chronological or statistical field to sort results by (e.g., 'volume', 'created_at', 'end_date_iso').
+            ascending (Optional[bool]): The sort direction. Defaults to false (descending order).
+            limit (Optional[int]): The maximum number of paginated results to return.
+            offset (Optional[int]): The pagination offset for results.
         """
         result = await gamma.get_events(
             slug=query,
@@ -59,13 +57,12 @@ def register_gamma_tools(mcp: FastMCP, gamma: GammaClient) -> None:
 
     @mcp.tool()
     async def get_event(event_id: str) -> str:
-        """Get detailed information about a specific Polymarket event.
+        """Retrieve detailed, comprehensive information regarding a specific Polymarket event.
 
-        Returns event metadata along with all markets belonging to this event,
-        including their current prices, volumes, and outcome tokens.
+        Provides complete event metadata alongside a listing of all associated constituent markets, including their real-time prices, trading volumes, and specific outcome token identifiers.
 
         Args:
-            event_id: The Gamma event ID (numeric string).
+            event_id (str): The unique Gamma identifier for the event (formatted as a numeric string).
         """
         result = await gamma.get_event(event_id)
         return json.dumps(result)
@@ -87,22 +84,22 @@ def register_gamma_tools(mcp: FastMCP, gamma: GammaClient) -> None:
         limit: Optional[int] = None,
         offset: Optional[int] = None,
     ) -> str:
-        """Search and discover individual Polymarket markets.
+        """Search and discover specific, individual Polymarket prediction markets.
 
-        Each market represents a single yes/no question with tradeable outcome tokens.
-        Markets contain CLOB token IDs needed for price and order book queries.
+        Each individual market constitutes a singular yes/no predictive question utilizing tradeable outcome tokens.
+        These markets provide the fundamental CLOB token IDs intrinsically required for pricing and order book evaluations.
 
         Args:
-            query: Search term to filter markets by title (matched via slug).
-            tag: Category tag to filter by.
-            active: If true, only return currently active/tradeable markets.
-            closed: If true, only return resolved/settled markets.
-            condition_id: Filter by on-chain condition ID.
-            clob_token_ids: Filter by CLOB token IDs.
-            order: Field to sort by.
-            ascending: Sort direction.
-            limit: Maximum number of results.
-            offset: Pagination offset.
+            query (Optional[str]): A search term utilized to filter markets by their title or descriptive slug.
+            tag (Optional[str]): A thematic category tag for filtering.
+            active (Optional[bool]): Set to true to strictly return currently active and successfully tradeable markets.
+            closed (Optional[bool]): Set to true to strictly return definitively resolved or settled markets.
+            condition_id (Optional[str]): Filter intrinsically by a unique on-chain condition ID.
+            clob_token_ids (Optional[str]): Filter fundamentally by defined CLOB token IDs.
+            order (Optional[str]): The specific field to sort the payload by.
+            ascending (Optional[bool]): The structural sort direction.
+            limit (Optional[int]): The maximum number of paginated results to return.
+            offset (Optional[int]): The defined pagination offset limit.
         """
         result = await gamma.get_markets(
             slug=query,
@@ -120,13 +117,12 @@ def register_gamma_tools(mcp: FastMCP, gamma: GammaClient) -> None:
 
     @mcp.tool()
     async def get_gamma_market(market_id_or_slug: str) -> str:
-        """Get detailed information about a specific Polymarket market.
+        """Retrieve detailed, comprehensive information regarding a single, specific Polymarket market natively via the Gamma API.
 
-        Returns full market metadata including question, description, outcomes,
-        CLOB token IDs, condition ID, volume, and resolution details.
+        Provides complete structural market metadata including the core question, qualitative description, array of outcomes, respective CLOB token IDs, global condition ID, cumulative volume, and definitive resolution parameters.
 
         Args:
-            market_id_or_slug: The Gamma market ID (numeric) or URL slug.
+            market_id_or_slug (str): The unique Gamma market mapping ID (numeric string) or URL-friendly slug.
         """
         result = await gamma.get_market(market_id_or_slug)
         return json.dumps(result)

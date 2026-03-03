@@ -100,6 +100,13 @@ polymarket-mcp/
 | **Data** | `data-api.polymarket.com` | Positions, trades, activity, open interest |
 | **CLOB Auth** | `clob.polymarket.com` | Order placement/cancellation, balances |
 
+
+### Development
+```bash
+npx -y @modelcontextprotocol/inspector uv run polymarket-mcp
+```
+
+
 ## Safety Guards
 
 The trading tools include built-in safety mechanisms:

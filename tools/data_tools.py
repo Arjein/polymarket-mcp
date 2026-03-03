@@ -27,18 +27,16 @@ def register_data_tools(mcp: FastMCP, clob: ClobClient, data: DataClient) -> Non
         start_ts: Optional[int] = None,
         end_ts: Optional[int] = None,
     ) -> str:
-        """Get historical price time-series for a token.
+        """Retrieve historical price time-series data for a specified token.
 
-        Returns a list of {t, p} objects (timestamp, price) for charting
-        and trend analysis. Essential for identifying momentum and reversals.
+        Provides a chronologically ordered list of objects containing timestamp and price data, facilitating charting and trend analysis.
 
         Args:
-            token_id: The CLOB token ID for the outcome.
-            interval: Preset window ending now. One of: 1h, 6h, 1d, 1w, 1m, max.
-                      Mutually exclusive with start_ts/end_ts.
-            fidelity: Data resolution in minutes (e.g. 60 for hourly, 1440 for daily).
-            start_ts: Start unix timestamp (UTC). Use with end_ts instead of interval.
-            end_ts: End unix timestamp (UTC). Use with start_ts instead of interval.
+            token_id (str): The fundamental token ID associated with a specific outcome.
+            interval (Optional[str]): A predefined time window ending at the current moment. Valid options include: '1h', '6h', '1d', '1w', '1m', 'max'. This parameter is mutually exclusive with 'start_ts'/'end_ts'.
+            fidelity (Optional[int]): The data resolution expressed in minutes (e.g., 60 for hourly data, 1440 for daily data).
+            start_ts (Optional[int]): The starting Unix timestamp in UTC. Use in conjunction with 'end_ts' instead of 'interval'.
+            end_ts (Optional[int]): The ending Unix timestamp in UTC. Use in conjunction with 'start_ts' instead of 'interval'.
         """
         result = await clob.get_prices_history(
             token_id,
@@ -53,13 +51,12 @@ def register_data_tools(mcp: FastMCP, clob: ClobClient, data: DataClient) -> Non
     async def get_open_interest(
         condition_id: Optional[str] = None,
     ) -> str:
-        """Get open interest (total shares outstanding) for a market.
+        """Retrieve the current open interest (total outstanding shares) for a specific market or globally.
 
-        High open interest indicates strong market conviction and liquidity.
-        Compare with volume to gauge whether new money is entering the market.
+        Open interest serves as an indicator of market conviction and overall liquidity.
 
         Args:
-            condition_id: The on-chain condition ID. Omit for global aggregate.
+            condition_id (Optional[str]): The unique on-chain identifier for a specific market's conditions. Omit to retrieve a global aggregate.
         """
         result = await data.get_open_interest(condition_id=condition_id)
         return json.dumps(result)
@@ -76,17 +73,17 @@ def register_data_tools(mcp: FastMCP, clob: ClobClient, data: DataClient) -> Non
         limit: Optional[int] = None,
         offset: Optional[int] = None,
     ) -> str:
-        """Get your current positions / holdings.
+        """Retrieve current portfolio positions and quantitative holdings for the authenticated user.
 
-        Returns position data including size, average entry price, and P&L
-        for each outcome token you hold. Uses POLYMARKET_WALLET_ADDRESS from .env.
+        Provides detailed position data including share size, average entry price, and calculated P&L for each held outcome token.
+        Automatically utilizes the wallet address defined in the `POLYMARKET_WALLET_ADDRESS` environment variable.
 
         Args:
-            market: Filter by market condition ID.
-            event_id: Filter by event ID.
-            size_threshold: Minimum position size to include.
-            limit: Maximum number of results.
-            offset: Pagination offset.
+            market (Optional[str]): Filter results by a specific market condition ID.
+            event_id (Optional[str]): Filter results by a specific overarching event ID.
+            size_threshold (Optional[float]): The minimum numerical position size required for inclusion in the results.
+            limit (Optional[int]): The maximum number of paginated results to return.
+            offset (Optional[int]): The pagination offset.
         """
         user = os.getenv("POLYMARKET_WALLET_ADDRESS")
         if not user:
@@ -108,15 +105,15 @@ def register_data_tools(mcp: FastMCP, clob: ClobClient, data: DataClient) -> Non
         limit: Optional[int] = None,
         offset: Optional[int] = None,
     ) -> str:
-        """Get historical trades for a user or market.
+        """Retrieve the historical log of executed trades associated with a specific user or market.
 
-        Returns executed trade records with price, size, side, and timestamp.
+        Provides chronological records of executed trades, detailing transaction price, share size, designated side, and timestamp.
 
         Args:
-            user: Wallet address to query trades for.
-            market: Filter by market condition ID.
-            limit: Maximum number of results.
-            offset: Pagination offset.
+            user (Optional[str]): The wallet address to query historical trades for.
+            market (Optional[str]): Filter results by a specific market condition ID.
+            limit (Optional[int]): The maximum number of paginated results to return.
+            offset (Optional[int]): The pagination offset.
         """
         result = await data.get_trades(
             user=user,
@@ -133,16 +130,16 @@ def register_data_tools(mcp: FastMCP, clob: ClobClient, data: DataClient) -> Non
         limit: Optional[int] = None,
         offset: Optional[int] = None,
     ) -> str:
-        """Get your activity log (trades, splits, merges, rewards).
+        """Retrieve a comprehensive activity log for the authenticated user, encompassing trades, splits, merges, and rewards.
 
-        Provides a complete audit trail of all account activity.
-        Uses POLYMARKET_WALLET_ADDRESS from .env.
+        Provides a detailed audit trail of all supported account actions.
+        Automatically utilizes the wallet address defined in the `POLYMARKET_WALLET_ADDRESS` environment variable.
 
         Args:
-            market: Filter by market condition ID.
-            activity_type: Filter by type: TRADE, SPLIT, MERGE, REDEEM, REWARD, CONVERSION.
-            limit: Maximum number of results.
-            offset: Pagination offset.
+            market (Optional[str]): Filter logs by a specific market condition ID.
+            activity_type (Optional[str]): Filter logs by explicit activity type (e.g., 'TRADE', 'SPLIT', 'MERGE', 'REDEEM', 'REWARD', 'CONVERSION').
+            limit (Optional[int]): The maximum number of paginated results to return.
+            offset (Optional[int]): The pagination offset.
         """
         user = os.getenv("POLYMARKET_WALLET_ADDRESS")
         if not user:

@@ -52,10 +52,27 @@ class AuthenticatedClobClient:
         from py_clob_client.client import ClobClient
         from py_clob_client.clob_types import ApiCreds
 
+        # Wallet address (optional, but required for proxy wallets/funder-style accounts)
+        funder = os.getenv("POLYMARKET_WALLET_ADDRESS")
+        # Signature type (0: EOA, 1: Email/Magic, 2: Proxy)
+        # Default to 1 (MAGIC) as it's common for Polymarket.com users
+        sig_type_str = os.getenv("POLYMARKET_SIGNATURE_TYPE", "1")
+        try:
+            sig_type = int(sig_type_str)
+        except ValueError:
+            sig_type = 1
+
+        logger.info(
+            "Initializing ClobClient (funder=%s, signature_type=%d)",
+            funder, sig_type
+        )
+
         self._client = ClobClient(
             CLOB_BASE_URL,
             key=private_key,
             chain_id=POLYGON_CHAIN_ID,
+            funder=funder,
+            signature_type=sig_type,
         )
 
         # Use pre-configured API creds if available, otherwise derive them
@@ -222,6 +239,38 @@ class AuthenticatedClobClient:
         from py_clob_client.clob_types import AssetType, BalanceAllowanceParams
 
         client = self._ensure_client()
-        at = AssetType.COLLATERAL if asset_type == "COLLATERAL" else AssetType.CONDITIONAL
-        params = BalanceAllowanceParams(asset_type=at, token_id=token_id)
-        return client.get_balance_allowance(params)
+        
+        # Normalize asset type to uppercase
+        asset_type_upper = asset_type.upper() if asset_type else "COLLATERAL"
+        at = AssetType.COLLATERAL if asset_type_upper == "COLLATERAL" else AssetType.CONDITIONAL
+        
+        # Ensure token_id is None if COLLATERAL (prevents API errors/confusion)
+        # and handle empty string gracefully
+        tid = token_id if token_id and asset_type_upper == "CONDITIONAL" else None
+        
+        logger.info(
+            "Fetching balance/allowance: asset_type=%s, token_id=%s",
+            at, tid
+        )
+        params = BalanceAllowanceParams(asset_type=at, token_id=tid)
+        result = client.get_balance_allowance(params)
+        logger.info("Balance result: %s", result)
+
+        # Add human-readable formatting (USDC and most Polymarket tokens use 6 decimals)
+        if isinstance(result, dict):
+            try:
+                raw_balance = int(result.get("balance", "0"))
+                result["formatted_balance"] = f"${raw_balance / 1_000_000:,.2f}"
+                
+                if "allowances" in result and isinstance(result["allowances"], dict):
+                    result["formatted_allowances"] = {}
+                    for spender, allowance in result["allowances"].items():
+                        allw = int(allowance)
+                        if allw > 10**30: # Effectively infinite
+                            result["formatted_allowances"][spender] = "Unlimited"
+                        else:
+                            result["formatted_allowances"][spender] = f"${allw / 1_000_000:,.2f}"
+            except (ValueError, TypeError) as e:
+                logger.warning("Could not format balance/allowance: %s", e)
+
+        return result
